@@ -2,7 +2,7 @@
 
 <html> 
 	<head>
-		<title>Picross</title>
+		<title>▦ Picross</title>
 		<meta charset="UTF-8" />
 		
 		<!-- Google Icons -->
@@ -12,12 +12,24 @@
 		<link rel="stylesheet" href="https://cdn.louis-parent.fr/drawers/style/?f=sizing+layout+bordering+coloring+utils+spacing+cursor+text"/>
 		<script src="https://cdn.louis-parent.fr/drawers/script/?f="></script>
 		
+		<script src="./Picross.js"></script>
+		
 		<script>
+			var randomPicross = null;
 			var triggers = {};
 			
 			window.addEventListener("load", () => {
 				setupTriggers();
 				triggerElement(document.getElementById("default-trigger"));
+				
+				generateRandomPicross();
+				document.getElementById("random-grid").addEventListener("change", event => {
+					let rows = getRowsOfGrid(event.target);
+					if(randomPicross.areRowsValid(rows))
+					{
+						alert("You Win !");
+					}
+				});
 			});
 			
 			function setupTriggers()
@@ -49,6 +61,117 @@
 				}
 
 				triggers[source.getAttribute("trigger")].style.display = "flex";
+			}
+			
+			function generateRandomPicross()
+			{
+				let width = parseInt(document.getElementById("random-grid-width").value);
+				let height = parseInt(document.getElementById("random-grid-height").value);
+				randomPicross = Picross.generate(width, height);
+				displayPicrossInElement(randomPicross, "random-grid");
+			}
+			
+			function displayPicrossInElement(picross, elementId)
+			{				
+				let element = document.getElementById(elementId);
+				element.innerHTML = "";
+				
+				let headerRow = document.createElement("div");
+				headerRow.classList.add("row");
+				
+				let space = document.createElement("span");
+				space.classList.add("cell");
+				space.classList.add("hint");
+				headerRow.appendChild(space);
+				
+				for(let columnIndex = 0; columnIndex < picross.getWidth(); columnIndex++)
+				{
+					let cell = document.createElement("span");
+					cell.classList.add("cell");
+					cell.classList.add("hint");
+					cell.innerHTML = "<span>" + picross.getColumnHint(columnIndex).join("</span><span>") + "</span>";
+					headerRow.appendChild(cell);
+				}
+				
+				element.appendChild(headerRow);
+				
+				for(let rowIndex = 0; rowIndex < picross.getHeight(); rowIndex++)
+				{
+					let row = document.createElement("div");
+					row.classList.add("row");
+				
+					let hint = document.createElement("span");
+					hint.classList.add("cell");
+					hint.classList.add("hint");
+					hint.innerHTML = "<span>" + picross.getRowHint(rowIndex).join("</span><span>") + "</span>";
+					row.appendChild(hint);
+					
+					for(let columnIndex = 0; columnIndex < picross.getWidth(); columnIndex++)
+					{
+						let cell = document.createElement("span");
+						cell.classList.add("cell");
+						cell.addEventListener("click", event => {
+							if(event.target.classList.contains("marked"))
+							{
+								event.target.classList.remove("marked");
+							}
+							else
+							{
+								event.target.classList.toggle("active");
+								element.dispatchEvent(new Event("change"));
+							}
+						});
+						cell.addEventListener("contextmenu", event => {
+							if(event.target.classList.contains("active"))
+							{
+								event.target.classList.remove("active");
+							}
+							else
+							{
+								event.target.classList.toggle("marked");
+							}
+							
+							event.preventDefault();
+						});
+						row.appendChild(cell);
+					}
+					
+					element.appendChild(row);
+				}
+			}
+			
+			function getRowsOfGrid(gridElement)
+			{
+				let rows = [];
+				
+				for(let row of gridElement.children)
+				{					
+					if(row != gridElement.firstChild)
+					{
+						let currentRow = [];
+						
+						for(let cell of row.children)
+						{
+							if(cell != row.firstChild)
+							{
+								currentRow.push(cell.classList.contains("active"));
+							}
+						}
+						
+						rows.push(currentRow);
+					}
+				}
+				
+				return rows;
+			}
+			
+			function clearRandomPicross()
+			{
+				for(let elem of document.getElementById("random-grid").getElementsByClassName("cell"))
+				{
+					elem.classList.remove("active");
+					elem.classList.remove("marked");
+				}
 			}
 		</script>
 		
@@ -83,6 +206,76 @@
 			.spaced
 			{
 				margin: 2%;
+			}
+			
+			.grid
+			{
+				width: 33vw;
+				height: 33vw;
+			
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: space-around;
+			}
+			
+			.grid > .row
+			{
+				width: 100%;
+					
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-around;
+			}
+			
+			.grid .cell
+			{
+				width: 5em;
+				height: 5em;
+				
+				border: solid 1px gray;
+				background: white;
+			}
+			
+			.grid .cell.active
+			{
+				background: black;
+			}
+			
+			.grid .cell.marked
+			{
+				background: red;
+			}
+			
+			.cell:not(.hint)
+			{
+				cursor: pointer;
+			}
+			
+			.hint > *
+			{
+				margin: 0.1em;
+			}
+			
+			.hint:not(:first-child)
+			{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: end;
+				
+				padding: 1em;
+			}
+			
+			.hint:first-child
+			{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: end;
+				
+				padding: 1em;
 			}
 			
 		</style>
@@ -123,13 +316,13 @@
 							<input id="random-grid-width" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> x <input id="random-grid-height" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> Cells
 						</div>
 						
-						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="generateRandomPicross">
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="generateRandomPicross()">
 							<span class="material-icons">casino</span>
 							Generate
 						</button>
 					</div>
 					
-					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;">
+					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;" onclick="clearRandomPicross()">
 						<span class="material-icons">clear</span>
 						Clear
 					</button>	
