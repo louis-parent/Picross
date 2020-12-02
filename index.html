@@ -97,15 +97,6 @@
 				
 				return rows;
 			}
-			
-			function clearRandomPicross()
-			{
-				for(let elem of document.getElementById("random-grid").getElementsByClassName("cell"))
-				{
-					elem.classList.remove("active");
-					elem.classList.remove("marked");
-				}
-			}
 		</script>
 	</head>
 	
@@ -150,7 +141,7 @@
 						</button>
 					</div>
 					
-					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;" onclick="clearRandomPicross()">
+					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;" onclick="randomPicross.clearDisplay()">
 						<span class="material-icons">clear</span>
 						Clear
 					</button>	

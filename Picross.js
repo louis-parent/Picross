@@ -264,6 +264,15 @@ class Picross
 		}
 	}
 	
+	clearDisplay()
+	{
+		for(let cell of this.element.getElementsByClassName("cell"))
+		{
+			cell.classList.remove("active");
+			cell.classList.remove("marked");
+		}
+	}
+	
 	static generate(width, height)
 	{
 		let picross = new Picross(width, height);
