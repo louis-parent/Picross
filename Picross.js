@@ -2,6 +2,7 @@ class Picross
 {
 	constructor(width, height)
 	{
+		this.element = null;
 		this.rows = this.create2DArray(height, width);
 		this.columns = this.create2DArray(width, height);
 	}
@@ -117,6 +118,150 @@ class Picross
 		}
 		
 		return allEquals;
+	}
+	
+	attach(element, empty)
+	{
+		empty = (empty == undefined) ? false : empty;
+		
+		this.element = element;
+		this.display(empty);
+	}
+	
+	display(empty)
+	{
+		if(this.element != undefined)
+		{
+			this.element.innerHTML = "";
+			this.element.appendChild(this.createGridHeaderElement());
+			
+			for(let row of this.createRowElements(empty))
+			{
+				this.element.appendChild(row);
+			}
+		}
+	}
+	
+	createGridHeaderElement()
+	{
+		let headerRow = this.createRowElement();
+		headerRow.appendChild(this.createHintElement(""));
+		
+		for(let columnIndex = 0; columnIndex < this.getWidth(); columnIndex++)
+		{
+			headerRow.appendChild(this.createHintForColumnElement(columnIndex));
+		}
+		
+		return headerRow;
+	}
+	
+	createRowElement()
+	{
+		let row = document.createElement("div");
+		row.classList.add("row");
+		return row;
+	}
+	
+	createHintForColumnElement(columnIndex)
+	{
+		let content = "<span>" + this.getColumnHint(columnIndex).join("</span><span>") + "</span>";
+		return this.createHintElement(content);
+	}
+	
+	createHintElement(content)
+	{
+		let hint = this.createCellElement();
+		hint.classList.add("hint");
+		
+		hint.innerHTML = content;
+		
+		return hint;
+	}
+	
+	createCellElement(active)
+	{
+		let cell = document.createElement("span");
+		cell.classList.add("cell");
+	
+		if(active != undefined && active)
+		{
+			cell.classList.add("active");
+		}
+	
+		return cell;
+	}
+	
+	createRowElements(empty)
+	{
+		let rows = [];
+		
+		for(let rowIndex = 0; rowIndex < this.getHeight(); rowIndex++)
+		{
+			let row = this.createRowElement();
+			row.appendChild(this.createHintOfRowElement(rowIndex));
+			
+			for(let cell of this.createCellsOfRowElements(rowIndex, empty))
+			{
+				row.appendChild(cell);
+			}
+			
+			rows.push(row);
+		}
+		
+		return rows;
+	}
+	
+	createHintOfRowElement(rowIndex)
+	{
+		let content = "<span>" + this.getRowHint(rowIndex).join("</span><span>") + "</span>";
+		return this.createHintElement(content);
+	}
+	
+	createCellsOfRowElements(rowIndex, empty)
+	{
+		let cells = [];
+		
+		for(let columnIndex = 0; columnIndex < this.getWidth(); columnIndex++)
+		{
+			let cell = this.createCellElement(!empty && this.rows[rowIndex][columnIndex]);
+			
+			cell.addEventListener("click", event => {
+				this.clickOn(event.target);
+			});
+			cell.addEventListener("contextmenu", event => {
+				this.rightClickOn(event.target);				
+				event.preventDefault();
+			});
+			
+			cells.push(cell);
+		}
+		
+		return cells;
+	}
+	
+	clickOn(cell)
+	{
+		if(cell.classList.contains("marked"))
+		{
+			cell.classList.remove("marked");
+		}
+		else
+		{
+			cell.classList.toggle("active");
+			this.element.dispatchEvent(new Event("change"));
+		}
+	}
+	
+	rightClickOn(cell)
+	{
+		if(cell.classList.contains("active"))
+		{
+			cell.classList.remove("active");
+		}
+		else
+		{
+			cell.classList.toggle("marked");
+		}
 	}
 	
 	static generate(width, height)

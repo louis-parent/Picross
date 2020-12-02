@@ -12,6 +12,8 @@
 		<link rel="stylesheet" href="https://cdn.louis-parent.fr/drawers/style/?f=sizing+layout+bordering+coloring+utils+spacing+cursor+text"/>
 		<script src="https://cdn.louis-parent.fr/drawers/script/?f="></script>
 		
+		<link rel="stylesheet" href="style.css"/>
+		<link rel="stylesheet" href="picross.css"/>
 		<script src="./Picross.js"></script>
 		
 		<script>
@@ -68,76 +70,7 @@
 				let width = parseInt(document.getElementById("random-grid-width").value);
 				let height = parseInt(document.getElementById("random-grid-height").value);
 				randomPicross = Picross.generate(width, height);
-				displayPicrossInElement(randomPicross, "random-grid");
-			}
-			
-			function displayPicrossInElement(picross, elementId)
-			{				
-				let element = document.getElementById(elementId);
-				element.innerHTML = "";
-				
-				let headerRow = document.createElement("div");
-				headerRow.classList.add("row");
-				
-				let space = document.createElement("span");
-				space.classList.add("cell");
-				space.classList.add("hint");
-				headerRow.appendChild(space);
-				
-				for(let columnIndex = 0; columnIndex < picross.getWidth(); columnIndex++)
-				{
-					let cell = document.createElement("span");
-					cell.classList.add("cell");
-					cell.classList.add("hint");
-					cell.innerHTML = "<span>" + picross.getColumnHint(columnIndex).join("</span><span>") + "</span>";
-					headerRow.appendChild(cell);
-				}
-				
-				element.appendChild(headerRow);
-				
-				for(let rowIndex = 0; rowIndex < picross.getHeight(); rowIndex++)
-				{
-					let row = document.createElement("div");
-					row.classList.add("row");
-				
-					let hint = document.createElement("span");
-					hint.classList.add("cell");
-					hint.classList.add("hint");
-					hint.innerHTML = "<span>" + picross.getRowHint(rowIndex).join("</span><span>") + "</span>";
-					row.appendChild(hint);
-					
-					for(let columnIndex = 0; columnIndex < picross.getWidth(); columnIndex++)
-					{
-						let cell = document.createElement("span");
-						cell.classList.add("cell");
-						cell.addEventListener("click", event => {
-							if(event.target.classList.contains("marked"))
-							{
-								event.target.classList.remove("marked");
-							}
-							else
-							{
-								event.target.classList.toggle("active");
-								element.dispatchEvent(new Event("change"));
-							}
-						});
-						cell.addEventListener("contextmenu", event => {
-							if(event.target.classList.contains("active"))
-							{
-								event.target.classList.remove("active");
-							}
-							else
-							{
-								event.target.classList.toggle("marked");
-							}
-							
-							event.preventDefault();
-						});
-						row.appendChild(cell);
-					}
-					
-					element.appendChild(row);
-				}
+				randomPicross.attach(document.getElementById("random-grid"), true);
 			}
 			
 			function getRowsOfGrid(gridElement)
@@ -174,111 +107,6 @@
 				}
 			}
 		</script>
-		
-		<style>
-			aside
-			{
-				border-right: 1px rgba(125, 125, 125, 0.5) solid;
-				box-shadow: rgba(0, 0, 0, 0.2) 0 0 25px 1px;
-			}
-			
-			h1
-			{
-				padding: 2vh 12.5vw;
-				transform: translateX(-25%);
-			}
-			
-			nav li
-			{
-				padding: 2.5% 0;
-			}
-			
-			nav li .material-icons
-			{
-				margin-right: 0.5em;
-			}
-			
-			nav li:hover :not(:first-child)
-			{
-				text-decoration: underline;
-			}
-			
-			.spaced
-			{
-				margin: 2%;
-			}
-			
-			.grid
-			{
-				width: 33vw;
-				height: 33vw;
-			
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: space-around;
-			}
-			
-			.grid > .row
-			{
-				width: 100%;
-					
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: space-around;
-			}
-			
-			.grid .cell
-			{
-				width: 5em;
-				height: 5em;
-				
-				border: solid 1px gray;
-				background: white;
-			}
-			
-			.grid .cell.active
-			{
-				background: black;
-			}
-			
-			.grid .cell.marked
-			{
-				background: red;
-			}
-			
-			.cell:not(.hint)
-			{
-				cursor: pointer;
-			}
-			
-			.hint > *
-			{
-				margin: 0.1em;
-			}
-			
-			.hint:not(:first-child)
-			{
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: end;
-				
-				padding: 1em;
-			}
-			
-			.hint:first-child
-			{
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: end;
-				
-				padding: 1em;
-			}
-			
-		</style>
 	</head>
 	
 	<body class="full-viewport unscrollable row-layout">

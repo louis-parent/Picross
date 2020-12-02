@@ -1,0 +1,74 @@
+.grid
+{			
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.grid > .row
+{
+	width: 100%;
+		
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.grid .cell
+{
+	min-width: 5em;
+	min-height: 5em;
+	
+	margin: 0.5em;
+	
+	border: solid 1px gray;
+	background: white;
+}
+
+.grid .cell.active
+{
+	background: black;
+}
+
+.grid .cell.marked
+{
+	background: red;
+}
+
+.cell:not(.hint)
+{
+	cursor: pointer;
+}
+
+.grid .cell.hint > *
+{
+	margin: 0.1em;
+}
+
+.grid .cell.hint
+{
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	
+	padding: 0.25em;
+	
+	background: cyan;
+}
+
+.grid .cell.hint .muted
+{
+	color: gray;
+}
+
+.grid .cell.hint:not(:first-child)
+{
+	flex-direction: column;
+}
+
+.grid .cell.hint:first-child
+{
+	flex-direction: row;
+}
