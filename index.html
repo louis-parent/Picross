@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html> 
+	<head>
+		<title>Picross</title>
+		<meta charset="UTF-8" />
+		
+		<!-- Google Icons -->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+		
+		<!-- Drawers -->
+		<link rel="stylesheet" href="https://cdn.louis-parent.fr/drawers/style/?f=sizing+layout+bordering+coloring+utils+spacing+cursor+text"/>
+		<script src="https://cdn.louis-parent.fr/drawers/script/?f="></script>
+		
+		<script>
+			var triggers = {};
+			
+			window.addEventListener("load", () => {
+				setupTriggers();
+				triggerElement(document.getElementById("default-trigger"));
+			});
+			
+			function setupTriggers()
+			{
+				document.querySelectorAll("[trigger]").forEach(element => {
+					let targetId = element.getAttribute("trigger");
+					let target = document.getElementById(targetId);
+					
+					triggers[targetId] = target;
+					target.style.display = "none";
+					
+					element.addEventListener("click", (event) => {
+						let element = event.target;
+						while(!element.hasAttribute("trigger"))
+						{
+							element = element.parentNode;
+						}
+						
+						triggerElement(element);
+					});
+				});
+			}
+			
+			function triggerElement(source)
+			{
+				for(let triggerId in triggers)
+				{
+					triggers[triggerId].style.display = "none";
+				}
+
+				triggers[source.getAttribute("trigger")].style.display = "flex";
+			}
+		</script>
+		
+		<style>
+			aside
+			{
+				border-right: 1px rgba(125, 125, 125, 0.5) solid;
+				box-shadow: rgba(0, 0, 0, 0.2) 0 0 25px 1px;
+			}
+			
+			h1
+			{
+				padding: 2vh 12.5vw;
+				transform: translateX(-25%);
+			}
+			
+			nav li
+			{
+				padding: 2.5% 0;
+			}
+			
+			nav li .material-icons
+			{
+				margin-right: 0.5em;
+			}
+			
+			nav li:hover :not(:first-child)
+			{
+				text-decoration: underline;
+			}
+			
+			.spaced
+			{
+				margin: 2%;
+			}
+			
+		</style>
+	</head>
+	
+	<body class="full-viewport unscrollable row-layout">
+		<aside class="quarter-width full-height">
+			<h1 class="row-layout center-aligned-layout no-y-margin">
+				<span class="material-icons" style="margin-right: 0.25em;">grid_on</span>
+				Picross
+			</h1>
+			
+			<nav>
+				<ul>
+					<li id="default-trigger" class="row-layout center-aligned-layout pointer-cursor" trigger="random">
+						<span class="material-icons">casino</span>
+						<span>Random Grid</span>
+					</li>
+					
+					<li class="row-layout center-aligned-layout pointer-cursor" trigger="load">
+						<span class="material-icons">input</span>
+						<span>Load Grid</span>
+					</li>
+					
+					<li class="row-layout center-aligned-layout pointer-cursor" trigger="draw">
+						<span class="material-icons">brush</span>
+						<span>Draw Grid</span>
+					</li>
+				</ul>
+			</nav>
+		</aside>
+		
+		<main class="three-quarter-width full-height">
+			<div id="random" class="column-layout center-aligned-layout">
+				<div class="row-layout around-justified-layout center-aligned-layout full-width spaced">
+					<div class="column-layout">
+						<div>
+							<input id="random-grid-width" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> x <input id="random-grid-height" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> Cells
+						</div>
+						
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="generateRandomPicross">
+							<span class="material-icons">casino</span>
+							Generate
+						</button>
+					</div>
+					
+					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;">
+						<span class="material-icons">clear</span>
+						Clear
+					</button>	
+				</div>
+				
+				<div id="random-grid" class="grid">
+				
+				</div>
+			</div>
+			
+			<div id="load">
+				Load Work in Progress
+			</div>
+			
+			<div id="draw">
+				Draw Work in Progress
+			</div>
+		</main>
+	</body>
+</html>
