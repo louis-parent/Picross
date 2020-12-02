@@ -100,8 +100,8 @@
 		</script>
 	</head>
 	
-	<body class="full-viewport unscrollable row-layout">
-		<aside class="quarter-width full-height">
+	<body class="row-layout">
+		<aside class="quarter-width">
 			<h1 class="row-layout center-aligned-layout no-y-margin">
 				<span class="material-icons" style="margin-right: 0.25em;">grid_on</span>
 				Picross
@@ -127,7 +127,7 @@
 			</nav>
 		</aside>
 		
-		<main class="three-quarter-width full-height">
+		<main class="three-quarter-width">
 			<div id="random" class="column-layout center-aligned-layout">
 				<div class="row-layout around-justified-layout center-aligned-layout full-width spaced">
 					<div class="column-layout">
@@ -135,7 +135,7 @@
 							<input id="random-grid-width" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> x <input id="random-grid-height" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> Cells
 						</div>
 						
-						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="randomPicross.regenerate()">
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="randomPicross.regenerate(parseInt(document.getElementById('random-grid-width').value), parseInt(document.getElementById('random-grid-height').value))">
 							<span class="material-icons">casino</span>
 							Generate
 						</button>

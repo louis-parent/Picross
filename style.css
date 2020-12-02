@@ -1,3 +1,9 @@
+body
+{
+	min-width: 100vw;
+	min-height: 100vh;
+}
+
 aside
 {
 	border-right: 1px rgba(125, 125, 125, 0.5) solid;

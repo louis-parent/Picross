@@ -279,8 +279,17 @@ class Picross
 		}
 	}
 	
-	regenerate()
-	{
+	regenerate(newWidth, newHeight)
+	{	
+		if(newWidth != undefined)
+		{
+			this.width = newWidth;
+		}
+		if(newHeight != undefined)
+		{
+			this.height = newHeight;
+		}
+	
 		this.randomize();
 		this.display(true);
 	}
