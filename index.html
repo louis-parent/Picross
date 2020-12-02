@@ -24,7 +24,7 @@
 				setupTriggers();
 				triggerElement(document.getElementById("default-trigger"));
 				
-				generateRandomPicross();
+				createRandomPicross();
 				document.getElementById("random-grid").addEventListener("change", event => {
 					let rows = getRowsOfGrid(event.target);
 					if(randomPicross.areRowsValid(rows))
@@ -65,7 +65,7 @@
 				triggers[source.getAttribute("trigger")].style.display = "flex";
 			}
 			
-			function generateRandomPicross()
+			function createRandomPicross()
 			{
 				let width = parseInt(document.getElementById("random-grid-width").value);
 				let height = parseInt(document.getElementById("random-grid-height").value);
@@ -135,7 +135,7 @@
 							<input id="random-grid-width" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> x <input id="random-grid-height" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> Cells
 						</div>
 						
-						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="generateRandomPicross()">
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="randomPicross.regenerate()">
 							<span class="material-icons">casino</span>
 							Generate
 						</button>

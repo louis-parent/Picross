@@ -3,8 +3,16 @@ class Picross
 	constructor(width, height)
 	{
 		this.element = null;
-		this.rows = this.create2DArray(height, width);
-		this.columns = this.create2DArray(width, height);
+		this.width = width;
+		this.height = height;
+		
+		this.clear();
+	}
+		
+	clear()
+	{
+		this.rows = this.create2DArray(this.height, this.width);
+		this.columns = this.create2DArray(this.width, this.height);
 	}
 	
 	create2DArray(firstDimensionLength, secondDimensionLength)
@@ -28,12 +36,12 @@ class Picross
 	
 	getWidth()
 	{
-		return this.columns.length;
+		return this.width;
 	}
 	
 	getHeight()
 	{
-		return this.rows.length;
+		return this.height;
 	}
 	
 	setCell(x, y, state)
@@ -120,12 +128,10 @@ class Picross
 		return allEquals;
 	}
 	
-	attach(element, empty)
-	{
-		empty = (empty == undefined) ? false : empty;
-		
+	attach(element)
+	{		
 		this.element = element;
-		this.display(empty);
+		this.display(true);
 	}
 	
 	display(empty)
@@ -273,19 +279,30 @@ class Picross
 		}
 	}
 	
+	regenerate()
+	{
+		this.randomize();
+		this.display(true);
+	}
+	
+	randomize()
+	{
+		this.clear();
+		
+		let repetition = (this.getWidth() * this.getHeight()) * Math.max(0.25, Math.min(0.5, Math.random()));
+		
+		for(let i = 0; i < repetition; i++)
+		{
+			let x = Picross.randomInt(0, this.getWidth());
+			let y = Picross.randomInt(0, this.getHeight());
+			this.setCell(x, y, true);
+		}
+	}
+	
 	static generate(width, height)
 	{
 		let picross = new Picross(width, height);
-
-		let repetition = (width * height) * Math.max(0.25, Math.min(0.5, Math.random()));
-		for(let i = 0; i < repetition; i++)
-		{
-			let x = Picross.randomInt(0, picross.getWidth());
-			let y = Picross.randomInt(0, picross.getHeight());
-			let state = true;
-			picross.setCell(x, y, state);
-		}
-		
+		picross.randomize();
 		return picross;
 	}
 	
