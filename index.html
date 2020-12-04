@@ -10,7 +10,7 @@
 		
 		<!-- Drawers -->
 		<link rel="stylesheet" href="https://cdn.louis-parent.fr/drawers/style/?f=sizing+layout+bordering+coloring+utils+spacing+cursor+text"/>
-		<script src="https://cdn.louis-parent.fr/drawers/script/?f="></script>
+		<script src="https://cdn.louis-parent.fr/drawers/script/?f=trigger"></script>
 		
 		<link rel="stylesheet" href="style.css"/>
 		<link rel="stylesheet" href="picross.css"/>
@@ -21,49 +21,16 @@
 			var triggers = {};
 			
 			window.addEventListener("load", () => {
-				setupTriggers();
-				triggerElement(document.getElementById("default-trigger"));
+				window.getDrawersInstance().getDrawer("trigger").triggerElement(document.getElementById("default-trigger"));
 				
 				createRandomPicross();
 				document.getElementById("random-grid").addEventListener("change", event => {
-					let rows = getRowsOfGrid(event.target);
-					if(randomPicross.areRowsValid(rows))
+					if(randomPicross.isDisplayValid())
 					{
 						alert("You Win !");
 					}
 				});
-			});
-			
-			function setupTriggers()
-			{
-				document.querySelectorAll("[trigger]").forEach(element => {
-					let targetId = element.getAttribute("trigger");
-					let target = document.getElementById(targetId);
-					
-					triggers[targetId] = target;
-					target.style.display = "none";
-					
-					element.addEventListener("click", (event) => {
-						let element = event.target;
-						while(!element.hasAttribute("trigger"))
-						{
-							element = element.parentNode;
-						}
-						
-						triggerElement(element);
-					});
-				});
-			}
-			
-			function triggerElement(source)
-			{
-				for(let triggerId in triggers)
-				{
-					triggers[triggerId].style.display = "none";
-				}
-
-				triggers[source.getAttribute("trigger")].style.display = "flex";
-			}
+			});			
 			
 			function createRandomPicross()
 			{
@@ -71,31 +38,6 @@
 				let height = parseInt(document.getElementById("random-grid-height").value);
 				randomPicross = Picross.generate(width, height);
 				randomPicross.attach(document.getElementById("random-grid"), true);
-			}
-			
-			function getRowsOfGrid(gridElement)
-			{
-				let rows = [];
-				
-				for(let row of gridElement.children)
-				{					
-					if(row != gridElement.firstChild)
-					{
-						let currentRow = [];
-						
-						for(let cell of row.children)
-						{
-							if(cell != row.firstChild)
-							{
-								currentRow.push(cell.classList.contains("active"));
-							}
-						}
-						
-						rows.push(currentRow);
-					}
-				}
-				
-				return rows;
 			}
 		</script>
 	</head>

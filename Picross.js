@@ -308,6 +308,46 @@ class Picross
 		}
 	}
 	
+	asRows()
+	{
+		return [...this.rows];
+	}
+	
+	asColumns()
+	{
+		return [...this.columns];
+	}
+	
+	displayAsRows()
+	{
+		let rows = [];
+				
+		for(let row of this.element.children)
+		{					
+			if(row != this.element.firstChild)
+			{
+				let currentRow = [];
+				
+				for(let cell of row.children)
+				{
+					if(cell != row.firstChild)
+					{
+						currentRow.push(cell.classList.contains("active"));
+					}
+				}
+				
+				rows.push(currentRow);
+			}
+		}
+		
+		return rows;
+	}
+	
+	isDisplayValid()
+	{
+		return this.areRowsValid(this.displayAsRows());
+	}
+	
 	static generate(width, height)
 	{
 		let picross = new Picross(width, height);
