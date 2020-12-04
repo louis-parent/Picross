@@ -9,7 +9,7 @@
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 		
 		<!-- Drawers -->
-		<link rel="stylesheet" href="https://cdn.louis-parent.fr/drawers/style/?f=sizing+layout+bordering+coloring+utils+spacing+cursor+text"/>
+		<link rel="stylesheet" href="https://cdn.louis-parent.fr/drawers/style/?f=sizing+layout+bordering+coloring+utils+spacing+cursor+text+visibility"/>
 		<script src="https://cdn.louis-parent.fr/drawers/script/?f=trigger"></script>
 		
 		<link rel="stylesheet" href="style.css"/>
@@ -33,18 +33,42 @@
 					}
 				});
 				
+				let loadedGrid = document.getElementById("loaded-grid");
+				loadedPicross.attach(loadedGrid);
+				loadedGrid.addEventListener("change", event => {
+					if(loadedPicross.isDisplayValid())
+					{
+						alert("You Win !");
+					}
+				});
+				
 				let drawnGrid = document.getElementById("draw-grid");
 				drawnPicross.attach(drawnGrid, false, false);
 				drawnGrid.addEventListener("change", event => {
-					const downloadLink = document.getElementById("download_drawn");
-					
+					const downloadLink = document.getElementById("download-drawn");
 					window.URL.revokeObjectURL(downloadLink.href);
 					
-					const picrossData = new Blob([JSON.stringify(drawnPicross.asRows())], { type: "application/json" });
+					const picrossData = new Blob([JSON.stringify(drawnPicross.displayAsRows())], { type: "application/picross" });
 					const picrossUrl = window.URL.createObjectURL(picrossData);
 					downloadLink.href = picrossUrl;
 				});
 			});
+			
+			function loadPicross(input)
+			{
+				if(input.files.length > 0)
+				{
+					let reader = new FileReader();
+					
+					reader.onload = function(event) {
+						let rows = JSON.parse(event.target.result);
+						loadedPicross.forRows(rows);
+						loadedPicross.display(true, true);
+					};
+					
+					reader.readAsText(input.files[0]);
+				}
+			}
 		</script>
 	</head>
 	
@@ -98,8 +122,21 @@
 				<div id="random-grid" class="grid"></div>
 			</div>
 			
-			<div id="load">
-				Load Work in Progress
+			<div id="load" class="column-layout center-aligned-layout">
+				<div class="row-layout around-justified-layout center-aligned-layout full-width spaced">
+					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em; margin-top: 0.2em;" onclick="document.getElementById('load-grid').click()">
+						<span class="material-icons">publish</span>
+						Import
+					</button>
+					<input id="load-grid" class="not-displayed" type="file" accept="application/picross" onchange="loadPicross(this)"/>
+					
+					<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;" onclick="loadedPicross.clearDisplay()">
+						<span class="material-icons">clear</span>
+						Clear
+					</button>	
+				</div>
+				
+				<div id="loaded-grid" class="grid"></div>
 			</div>
 			
 			<div id="draw" class="column-layout center-aligned-layout">
@@ -121,11 +158,11 @@
 							Clear
 						</button>	
 						
-						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em; margin-top: 0.2em;" onclick="document.getElementById('download_drawn').click()">
-							<span class="material-icons">system_update_alt</span>
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em; margin-top: 0.2em;" onclick="document.getElementById('download-drawn').click()">
+							<span class="material-icons">get_app</span>
 							Export
 						</button>
-						<a id="download_drawn" download="drawn.pix" href=""></a>
+						<a class="not-displayed" id="download-drawn" download="drawn.pix" href=""></a>
 					</div>
 				</div>
 				

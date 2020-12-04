@@ -366,20 +366,21 @@ class Picross
 				
 		for(let row of this.element.children)
 		{					
-			if(row != this.element.firstChild)
+			let currentRow = [];
+				
+			for(let cell of row.children)
 			{
-				let currentRow = [];
-				
-				for(let cell of row.children)
+				if(!cell.classList.contains("hint"))
 				{
-					if(cell != row.firstChild)
-					{
-						currentRow.push(cell.classList.contains("active"));
-					}
+					currentRow.push(cell.classList.contains("active"));
 				}
-				
+			}
+			
+			if(currentRow.length > 0)
+			{
 				rows.push(currentRow);
 			}
+			
 		}
 		
 		return rows;
