@@ -5,6 +5,7 @@ class Picross
 		this.element = null;
 		this.width = width;
 		this.height = height;
+		this.bindedCheckSuccess = this.checkSuccess.bind(this);
 		
 		this.clear();
 	}
@@ -389,6 +390,24 @@ class Picross
 	isDisplayValid()
 	{
 		return this.areRowsValid(this.displayAsRows());
+	}
+	
+	enableSuccessChecking()
+	{
+		this.element.addEventListener("change", this.bindedCheckSuccess);
+	}
+	
+	disableSuccessChecking()
+	{
+		this.element.removeEventListener("change", this.bindedCheckSuccess);
+	}
+	
+	checkSuccess(event)
+	{
+		if(this.isDisplayValid())
+		{
+			alert("You Win !");
+		}
 	}
 	
 	static generate(width, height)

@@ -24,23 +24,11 @@
 			window.addEventListener("load", () => {
 				window.getDrawersInstance().getDrawer("trigger").triggerElement(document.getElementById("default-trigger"));
 				
-				let randomGrid = document.getElementById("random-grid");
-				randomPicross.attach(randomGrid);
-				randomGrid.addEventListener("change", event => {
-					if(randomPicross.isDisplayValid())
-					{
-						alert("You Win !");
-					}
-				});
-				
-				let loadedGrid = document.getElementById("loaded-grid");
-				loadedPicross.attach(loadedGrid);
-				loadedGrid.addEventListener("change", event => {
-					if(loadedPicross.isDisplayValid())
-					{
-						alert("You Win !");
-					}
-				});
+				randomPicross.attach(document.getElementById("random-grid"));
+				randomPicross.enableSuccessChecking();
+								
+				loadedPicross.attach(document.getElementById("loaded-grid"));
+				loadedPicross.enableSuccessChecking();
 				
 				let drawnGrid = document.getElementById("draw-grid");
 				drawnPicross.attach(drawnGrid, false, false);
