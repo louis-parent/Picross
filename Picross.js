@@ -128,20 +128,24 @@ class Picross
 		return allEquals;
 	}
 	
-	attach(element)
+	attach(element, empty = true, showHint = true)
 	{		
 		this.element = element;
-		this.display(true);
+		this.display(empty, showHint);
 	}
 	
-	display(empty)
+	display(showHint, empty)
 	{
 		if(this.element != undefined)
 		{
 			this.element.innerHTML = "";
-			this.element.appendChild(this.createGridHeaderElement());
 			
-			for(let row of this.createRowElements(empty))
+			if(showHint)
+			{
+				this.element.appendChild(this.createGridHeaderElement());
+			}
+			
+			for(let row of this.createRowElements(showHint, empty))
 			{
 				this.element.appendChild(row);
 			}
@@ -197,14 +201,18 @@ class Picross
 		return cell;
 	}
 	
-	createRowElements(empty)
+	createRowElements(showHint, empty)
 	{
 		let rows = [];
 		
 		for(let rowIndex = 0; rowIndex < this.getHeight(); rowIndex++)
 		{
 			let row = this.createRowElement();
-			row.appendChild(this.createHintOfRowElement(rowIndex));
+			
+			if(showHint)
+			{
+				row.appendChild(this.createHintOfRowElement(rowIndex));
+			}
 			
 			for(let cell of this.createCellsOfRowElements(rowIndex, empty))
 			{
@@ -279,8 +287,15 @@ class Picross
 		}
 	}
 	
-	regenerate(newWidth, newHeight)
+	regenerate(newWidth, newHeight, empty = true, showHint = true)
 	{	
+		this.resize(newWidth, newHeight);
+		this.randomize();
+		this.display(empty, showHint);
+	}
+	
+	resize(newWidth, newHeight)
+	{
 		if(newWidth != undefined)
 		{
 			this.width = newWidth;
@@ -289,9 +304,14 @@ class Picross
 		{
 			this.height = newHeight;
 		}
+		
+		this.clear();
+	}
 	
-		this.randomize();
-		this.display(true);
+	resizeAndRefresh(newWidth, newHeight, empty = true, showHint = true)
+	{
+		this.resize(newWidth, newHeight);
+		this.display(empty, showHint);
 	}
 	
 	randomize()
@@ -308,6 +328,12 @@ class Picross
 		}
 	}
 	
+	erase()
+	{
+		this.clear();
+		this.clearDisplay();
+	}
+	
 	asRows()
 	{
 		return [...this.rows];
@@ -316,6 +342,22 @@ class Picross
 	asColumns()
 	{
 		return [...this.columns];
+	}
+	
+	forRows(rows)
+	{
+		let height = rows.length;
+		let width = rows[0].length;
+		
+		this.resize(width, height);
+		
+		for(let y = 0; y < height; y++)
+		{
+			for(let x = 0; x < width; x++)
+			{
+				this.setCell(x, y, rows[y][x]);
+			}
+		}
 	}
 	
 	displayAsRows()

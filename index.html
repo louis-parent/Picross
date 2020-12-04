@@ -17,28 +17,34 @@
 		<script src="./Picross.js"></script>
 		
 		<script>
-			var randomPicross = null;
-			var triggers = {};
+			var randomPicross = Picross.generate(5, 5);
+			var loadedPicross = new Picross(0, 0);
+			var drawnPicross = new Picross(5, 5);
 			
 			window.addEventListener("load", () => {
 				window.getDrawersInstance().getDrawer("trigger").triggerElement(document.getElementById("default-trigger"));
 				
-				createRandomPicross();
-				document.getElementById("random-grid").addEventListener("change", event => {
+				let randomGrid = document.getElementById("random-grid");
+				randomPicross.attach(randomGrid);
+				randomGrid.addEventListener("change", event => {
 					if(randomPicross.isDisplayValid())
 					{
 						alert("You Win !");
 					}
 				});
-			});			
-			
-			function createRandomPicross()
-			{
-				let width = parseInt(document.getElementById("random-grid-width").value);
-				let height = parseInt(document.getElementById("random-grid-height").value);
-				randomPicross = Picross.generate(width, height);
-				randomPicross.attach(document.getElementById("random-grid"), true);
-			}
+				
+				let drawnGrid = document.getElementById("draw-grid");
+				drawnPicross.attach(drawnGrid, false, false);
+				drawnGrid.addEventListener("change", event => {
+					const downloadLink = document.getElementById("download_drawn");
+					
+					window.URL.revokeObjectURL(downloadLink.href);
+					
+					const picrossData = new Blob([JSON.stringify(drawnPicross.asRows())], { type: "application/json" });
+					const picrossUrl = window.URL.createObjectURL(picrossData);
+					downloadLink.href = picrossUrl;
+				});
+			});
 		</script>
 	</head>
 	
@@ -77,7 +83,7 @@
 							<input id="random-grid-width" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> x <input id="random-grid-height" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> Cells
 						</div>
 						
-						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" onclick="randomPicross.regenerate(parseInt(document.getElementById('random-grid-width').value), parseInt(document.getElementById('random-grid-height').value))">
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="margin-top: 0.2em;" onclick="randomPicross.regenerate(parseInt(document.getElementById('random-grid-width').value), parseInt(document.getElementById('random-grid-height').value))">
 							<span class="material-icons">casino</span>
 							Generate
 						</button>
@@ -89,17 +95,41 @@
 					</button>	
 				</div>
 				
-				<div id="random-grid" class="grid">
-				
-				</div>
+				<div id="random-grid" class="grid"></div>
 			</div>
 			
 			<div id="load">
 				Load Work in Progress
 			</div>
 			
-			<div id="draw">
-				Draw Work in Progress
+			<div id="draw" class="column-layout center-aligned-layout">
+				<div class="row-layout around-justified-layout center-aligned-layout full-width spaced">
+					<div class="column-layout">
+						<div>
+							<input id="drawn-grid-width" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> x <input id="drawn-grid-height" type="number" value="5" min="1" step="1" style="max-width: 5em;" /> Cells
+						</div>
+						
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="margin-top: 0.2em;" onclick="drawnPicross.resizeAndRefresh(parseInt(document.getElementById('drawn-grid-width').value), parseInt(document.getElementById('drawn-grid-height').value), false, false)">
+							<span class="material-icons">straighten</span>
+							Resize
+						</button>
+					</div>
+					
+					<div class="column-layout">
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em;" onclick="drawnPicross.erase()">
+							<span class="material-icons">clear</span>
+							Clear
+						</button>	
+						
+						<button class="row-layout center-aligned-layout center-justified-layout pointer-cursor centered-text" style="max-height: 3em; margin-top: 0.2em;" onclick="document.getElementById('download_drawn').click()">
+							<span class="material-icons">system_update_alt</span>
+							Export
+						</button>
+						<a id="download_drawn" download="drawn.pix" href=""></a>
+					</div>
+				</div>
+				
+				<div id="draw-grid" class="grid"></div>
 			</div>
 		</main>
 	</body>
